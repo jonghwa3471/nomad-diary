@@ -6,7 +6,7 @@ import { styled } from "styled-components/native";
 
 const View = styled.View`
   flex: 1;
-  padding: 0 50px;
+  padding: 0 30px;
   padding-top: 100px;
   background-color: ${colors.bgColor};
 `;
@@ -14,6 +14,7 @@ const View = styled.View`
 const Title = styled.Text`
   color: ${colors.textColor};
   font-size: 38px;
+  font-weight: 500;
   margin-bottom: 100px;
 `;
 
@@ -27,7 +28,7 @@ const Btn = styled.TouchableOpacity`
   bottom: 80px;
   right: 40px;
   background-color: ${colors.btnColor};
-  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 1px 1px 3px rgba(41, 30, 95, 0.2);
 `;
 
 export default function Home({
