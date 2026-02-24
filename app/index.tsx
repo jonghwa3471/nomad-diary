@@ -1,6 +1,7 @@
 import Navigator from "@/components/navigator";
+import { DBContext } from "@/context";
 import { SplashScreen } from "expo-router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Realm from "realm";
 
 SplashScreen.preventAutoHideAsync();
@@ -17,14 +18,15 @@ const FeelingSchema = {
 
 export default function App() {
   const [ready, setReady] = useState(false);
+  const [realm, setRealm] = useState<Realm>();
   useEffect(() => {
     async function prepare() {
       try {
-        const realm = await Realm.open({
+        const connection = await Realm.open({
           path: "nomadDiaryDB",
           schema: [FeelingSchema],
         });
-        console.log(realm);
+        setRealm(connection);
       } catch (e) {
         console.warn(e);
       } finally {
@@ -40,5 +42,9 @@ export default function App() {
     }
   }, [ready]);
 
-  return <Navigator />;
+  return (
+    <DBContext.Provider value={realm}>
+      <Navigator />
+    </DBContext.Provider>
+  );
 }
