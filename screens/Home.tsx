@@ -4,7 +4,7 @@ import { useDB } from "@/context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
-import { FlatList } from "react-native";
+import { FlatList, TouchableOpacity } from "react-native";
 import { styled } from "styled-components/native";
 
 const View = styled.View`
@@ -66,26 +66,32 @@ export default function Home({
   const { navigate } = navigation;
   useEffect(() => {
     const results = realm?.objects<Feeling>("Feeling");
-    setFeelings(results);
-    results?.addListener(() => {
-      const results = realm?.objects<Feeling>("Feeling");
-      setFeelings(results);
+    results?.addListener((feelings, changes) => {
+      setFeelings(feelings.sorted("_id", true));
     });
     return () => {
       results?.removeAllListeners();
     };
   }, [realm]);
+  const onPress = (id: number) => {
+    realm?.write(() => {
+      const feeling = realm.objectForPrimaryKey("Feeling", id);
+      realm.delete(feeling);
+    });
+  };
   return (
     <View>
-      <Title>My Journal</Title>
+      <Title>종현이 저주노트</Title>
       <FlatList
         data={feelings}
         keyExtractor={(item) => item._id.toString()}
         renderItem={({ item }) => (
-          <Record>
-            <Emotion>{item.emotion}</Emotion>
-            <Message>{item.message}</Message>
-          </Record>
+          <TouchableOpacity onPress={() => onPress(item._id)}>
+            <Record>
+              <Emotion>{item.emotion}</Emotion>
+              <Message>{item.message}</Message>
+            </Record>
+          </TouchableOpacity>
         )}
         contentContainerStyle={{ gap: 10 }}
       ></FlatList>

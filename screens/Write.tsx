@@ -19,6 +19,8 @@ const Text = styled.Text`
   text-align: center;
   font-size: 28px;
   font-weight: 500;
+  width: 70%;
+  align-self: center;
 `;
 
 const TextInput = styled.TextInput`
@@ -77,7 +79,7 @@ export default function Write({
   const onEmotionPress = (face: string) => setSelectedEmotion(face);
   const onSubmit = () => {
     if (selectedEmotion === "" || feelings === "") {
-      return Alert.alert("Please complete form.");
+      return Alert.alert("내용 적어라.");
     }
     realm?.write(() => {
       realm.create("Feeling", {
@@ -90,7 +92,7 @@ export default function Write({
   };
   return (
     <View>
-      <Text>How do you feel today?</Text>
+      <Text>종현이가 당신의 기분을 어떻게 만들었나요?</Text>
       <Emotions>
         {emotions.map((emotion, index) => (
           <Emotion
@@ -108,11 +110,11 @@ export default function Write({
         onSubmitEditing={onSubmit}
         onChangeText={onChangeText}
         value={feelings}
-        placeholder="Write your feelings..."
+        placeholder="종현이를 저주하세요..."
         placeholderTextColor={"gray"}
       />
       <Btn onPress={onSubmit} style={{ elevation: 5 }}>
-        <BtnText>Save</BtnText>
+        <BtnText>저장띠</BtnText>
       </Btn>
     </View>
   );
