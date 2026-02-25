@@ -5,6 +5,11 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
 import { FlatList, TouchableOpacity } from "react-native";
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from "react-native-google-mobile-ads";
 import { styled } from "styled-components/native";
 
 const View = styled.View`
@@ -12,13 +17,16 @@ const View = styled.View`
   padding: 0 30px;
   padding-top: 100px;
   background-color: ${colors.bgColor};
+  align-items: center;
+  justify-content: center;
 `;
 
 const Title = styled.Text`
   color: ${colors.textColor};
   font-size: 38px;
   font-weight: 500;
-  margin-bottom: 100px;
+  width: 100%;
+  margin-bottom: 30px;
 `;
 
 const Btn = styled.TouchableOpacity`
@@ -82,6 +90,7 @@ export default function Home({
   return (
     <View>
       <Title>종현이 저주노트</Title>
+      <BannerAd unitId={TestIds.BANNER} size={BannerAdSize.BANNER} />
       <FlatList
         data={feelings}
         keyExtractor={(item) => item._id.toString()}
@@ -94,6 +103,7 @@ export default function Home({
           </TouchableOpacity>
         )}
         contentContainerStyle={{ gap: 10 }}
+        style={{ marginVertical: 50, width: "100%" }}
       ></FlatList>
       <Btn
         onPress={() => navigate("Write")}

@@ -4,6 +4,11 @@ import { useDB } from "@/context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState } from "react";
 import { Alert } from "react-native";
+import {
+  AdEventType,
+  InterstitialAd,
+  TestIds,
+} from "react-native-google-mobile-ads";
 import { styled } from "styled-components/native";
 
 const View = styled.View`
@@ -88,7 +93,27 @@ export default function Write({
         message: feelings,
       });
     });
-    goBack();
+
+    const interstitialAd = InterstitialAd.createForAdRequest(
+      TestIds.INTERSTITIAL,
+      {
+        requestAgent: "CoolAds",
+      },
+    );
+
+    const unsubscribe = interstitialAd.addAdEventListener(
+      AdEventType.LOADED,
+      () => {
+        interstitialAd.show();
+      },
+    );
+
+    interstitialAd.addAdEventListener(AdEventType.CLOSED, () => {
+      unsubscribe();
+      goBack();
+    });
+
+    interstitialAd.load();
   };
   return (
     <View>

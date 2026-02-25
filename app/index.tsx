@@ -2,9 +2,21 @@ import Navigator from "@/components/navigator";
 import { DBContext } from "@/context";
 import { SplashScreen } from "expo-router";
 import React, { useEffect, useState } from "react";
+import mobileAds, { MaxAdContentRating } from "react-native-google-mobile-ads";
 import Realm from "realm";
 
 SplashScreen.preventAutoHideAsync();
+
+async function initAds() {
+  await mobileAds().setRequestConfiguration({
+    testDeviceIdentifiers: ["EMULATOR"],
+    maxAdContentRating: MaxAdContentRating.PG,
+  });
+
+  await mobileAds().initialize();
+}
+
+initAds();
 
 const FeelingSchema = {
   name: "Feeling",
