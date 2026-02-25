@@ -6,7 +6,8 @@ import { useState } from "react";
 import { Alert } from "react-native";
 import {
   AdEventType,
-  InterstitialAd,
+  RewardedAdEventType,
+  RewardedInterstitialAd,
   TestIds,
 } from "react-native-google-mobile-ads";
 import { styled } from "styled-components/native";
@@ -84,36 +85,49 @@ export default function Write({
   const onEmotionPress = (face: string) => setSelectedEmotion(face);
   const onSubmit = () => {
     if (selectedEmotion === "" || feelings === "") {
-      return Alert.alert("내용 적어라.");
+      return Alert.alert(
+        "이모지와 내용 모두 적어주세용.",
+        "안 적으면 아쉽게 된거죵",
+      );
     }
-    realm?.write(() => {
-      realm.create("Feeling", {
-        _id: Date.now(),
-        emotion: selectedEmotion,
-        message: feelings,
-      });
-    });
 
-    const interstitialAd = InterstitialAd.createForAdRequest(
-      TestIds.INTERSTITIAL,
-      {
-        requestAgent: "CoolAds",
-      },
+    const cleanup = () => {
+      unsubscribeLoaded();
+      unsubscribeRewarded();
+      unsubscribeClosed();
+    };
+
+    const rewardedInterstitialAd = RewardedInterstitialAd.createForAdRequest(
+      TestIds.REWARDED_INTERSTITIAL,
     );
 
-    const unsubscribe = interstitialAd.addAdEventListener(
-      AdEventType.LOADED,
+    const unsubscribeLoaded = rewardedInterstitialAd.addAdEventListener(
+      RewardedAdEventType.LOADED,
+      () => rewardedInterstitialAd.show(),
+    );
+
+    const unsubscribeRewarded = rewardedInterstitialAd.addAdEventListener(
+      RewardedAdEventType.EARNED_REWARD,
       () => {
-        interstitialAd.show();
+        realm?.write(() => {
+          realm.create("Feeling", {
+            _id: Date.now(),
+            emotion: selectedEmotion,
+            message: feelings,
+          });
+        });
       },
     );
 
-    interstitialAd.addAdEventListener(AdEventType.CLOSED, () => {
-      unsubscribe();
-      goBack();
-    });
+    const unsubscribeClosed = rewardedInterstitialAd.addAdEventListener(
+      AdEventType.CLOSED,
+      () => {
+        cleanup();
+        goBack();
+      },
+    );
 
-    interstitialAd.load();
+    rewardedInterstitialAd.load();
   };
   return (
     <View>
